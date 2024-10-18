@@ -1,0 +1,21 @@
+# Cell2Structure project configuration
+
+# define the BBBC021 csv files
+[[BBC021_CSV]]
+type = "compounds"
+url = "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_compound.csv"
+file = "BBBC021_v1_compound.csv"
+
+[[BBC021_CSV]]
+type = "images"
+url = "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_image.csv"
+file = "BBBC021_v1_image.csv"
+
+[[BBC021_CSV]]
+type = "moas"
+url = "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_moa.csv"
+file = "BBBC021_v1_moa.csv"
+
+# additional structures
+[structures]
+DMSO = "CS(=O)C"

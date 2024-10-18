@@ -1,16 +1,13 @@
 import os
 import requests
 import argparse
+import tomlkit
 
 from tqdm import tqdm
 
 
 default_data_dir = "../data/external"
-dataset_urls = {
-    "compounds": {"url": "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_compound.csv", "file": "BBBC021_v1_compound.csv"},
-    "images": {"url": "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_image.csv", "file": "BBBC021_v1_image.csv"},
-    "moas": {"url": "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_moa.csv", "file": "BBBC021_v1_moa.csv"}
-}
+default_config_file = "../project_config.toml"
 
 
 parser = argparse.ArgumentParser(prog="get_dataset.py", 
@@ -20,6 +17,11 @@ parser.add_argument('-datadir',
                     required=False, 
                     default=default_data_dir,
                     help="Data directory in which the files should be stored")
+parser.add_argument('-config', 
+                    type=str, 
+                    required=False, 
+                    default=default_config_file,
+                    help="Project configuration file (toml format)")
 args = parser.parse_args()
 
 
@@ -30,12 +32,23 @@ def get_BBBC021_dataset(url, filepath):
             file_out.write(data)
 
 
+def load_project_conf(toml_file):
+    with open(toml_file, "rb") as config_file:
+        config = tomlkit.load(config_file)
+    
+    return config
+    
+
 def main():
     data_dir = args.datadir
-    for key, value in dataset_urls.items():
-        out_filepath = os.path.join(data_dir, value["file"])
-        print(value["file"])
-        get_BBBC021_dataset(value["url"], out_filepath)
+    config_file = args.config
+
+    config = load_project_conf(config_file)
+    
+    for data_table in config["BBC021_CSV"]:
+        out_filepath = os.path.join(data_dir, data_table["file"])
+        print(data_table["file"])
+        get_BBBC021_dataset(data_table["url"], out_filepath)
 
 
 if __name__=="__main__":
