@@ -46,6 +46,8 @@ def main():
     config = load_project_conf(config_file)
     
     for data_table in config["BBC021_CSV"]:
+        if data_table["type"] == "moas_enchanced":
+            continue
         out_filepath = os.path.join(data_dir, data_table["file"])
         print(data_table["file"])
         get_BBBC021_dataset(data_table["url"], out_filepath)

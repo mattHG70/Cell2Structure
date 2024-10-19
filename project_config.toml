@@ -16,6 +16,15 @@ type = "moas"
 url = "https://data.broadinstitute.org/bbbc/BBBC021/BBBC021_v1_moa.csv"
 file = "BBBC021_v1_moa.csv"
 
+[[BBC021_CSV]]
+type = "moas_enhanced"
+file = "BBBC021_v1_compound_smiles_moa.xlsx"
+
 # additional structures
 [structures]
 DMSO = "CS(=O)C"
+
+# file name of the final dataset
+[final_dataset]
+file_original = "BBBC021_final_original_dataset.csv"
+file_enhanced = "BBBC021_final_enhanced_dataset.csv"
