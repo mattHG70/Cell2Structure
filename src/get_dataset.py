@@ -1,7 +1,8 @@
 import os
 import requests
 import argparse
-import tomlkit
+
+import project_utils as utl
 
 from tqdm import tqdm
 
@@ -30,20 +31,13 @@ def get_BBBC021_dataset(url, filepath):
     with open(filepath, "wb") as file_out:
         for data in tqdm(resp.iter_content()):
             file_out.write(data)
-
-
-def load_project_conf(toml_file):
-    with open(toml_file, "rb") as config_file:
-        config = tomlkit.load(config_file)
-    
-    return config
     
 
 def main():
     data_dir = args.datadir
     config_file = args.config
 
-    config = load_project_conf(config_file)
+    config = utl.load_project_conf(config_file)
     
     for data_table in config["BBC021_CSV"]:
         if data_table["type"] == "moas_enchanced":

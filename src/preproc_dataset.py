@@ -1,8 +1,8 @@
 import os
-import tomlkit
 import argparse
 
 import pandas as pd
+import project_utils as utl
 
 
 default_config_file = "../project_config.toml"
@@ -34,12 +34,6 @@ parser.add_argument('-config',
                     default=default_config_file,
                     help="Project configuration file (toml format)")
 args = parser.parse_args()
-
-
-def load_project_conf(toml_file):
-    with open(toml_file, "rb") as config_file:
-        config = tomlkit.load(config_file)
-    return config
 
 
 def get_config_item(type):
@@ -113,7 +107,7 @@ def prepare_enhanced_dataseet(df):
 
 def main():
     global project_config
-    project_config = load_project_conf(args.config)
+    project_config = utl.load_project_conf(args.config)
     
     df_bbbc021 = load_dataframe(args.datadir_ext, "images")
 
