@@ -28,3 +28,8 @@ DMSO = "CS(=O)C"
 [final_dataset]
 file_original = "BBBC021_final_original_dataset.csv"
 file_enhanced = "BBBC021_final_enhanced_dataset.csv"
+
+# paramteres for generation of Morgan chemical fingerprints
+[Moragen_FP_params]
+radius = 2
+size = 2048
