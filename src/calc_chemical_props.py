@@ -44,7 +44,7 @@ parser.add_argument('-config',
 args = parser.parse_args()
 
 
-def generate_rdkit_desct(df):
+def generate_rdkit_descr(df):
     mols = df["mol"].to_list()
     descriptors = [Descriptors.CalcMolDescriptors(mol) for mol in mols]
     df = pd.DataFrame(data=descriptors)
@@ -61,7 +61,7 @@ def main():
     df_compounds = utl.get_dataframe(df_bbbc021, args.style)
     PandasTools.AddMoleculeColumnToFrame(df_compounds, smilesCol="Image_Metadata_SMILES", molCol="mol")
 
-    descriptors = generate_rdkit_desct(df_compounds)
+    descriptors = generate_rdkit_descr(df_compounds)
 
     df_compounds = pd.concat([df_compounds, descriptors], axis=1)
 

@@ -18,4 +18,6 @@ def get_dataframe(df, style):
     if style == "moa":
         df_cmpds = df_cmpds[(df_cmpds["Image_Metadata_SMILES"].notna()) & (df_cmpds["Image_Metadata_MoA"].notna())]
 
+    df_cmpds.index = pd.RangeIndex(len(df_cmpds.index))
+    
     return df_cmpds
