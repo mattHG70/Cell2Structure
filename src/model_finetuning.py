@@ -132,11 +132,11 @@ dataloader_train = normalize_dataset(dataloader_train, 'images/sorted_reduced/tr
 
 dataloader_test = normalize_dataset(dataloader_test, 'images/sorted_reduced/test')
 
-def train_model(model, dataloader, lr, decay):
+def train_model(model, dataloader, lr, beta1):
     print('training model with lr = {}, weight decay = {}'.format(lr, momentum))
     # Define  loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.fc.parameters(), lr=lr, weight_decay=decay)
+    optimizer = torch.optim.Adam(model.fc.parameters(), lr=lr, betas=(beta1, 0.999))
 
     #define the device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -172,9 +172,9 @@ def train_model(model, dataloader, lr, decay):
 
 model_name = 1
 for lr in [0.001, 0.01, 0.1, 1]:
-    for decay in [0.00001, 0.0001, 0.001]:
+    for beta1 in [0.9, 0.8, 0.99]:
     
-        model, losses = train_model(model_raw, dataloader_train, decay)
+        model, losses = train_model(model_raw, dataloader_train, beta1)
         try:
             torch.save(model.state_dict(), 'models/model{}/cnn'.format(model_name))
         except:
