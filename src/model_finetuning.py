@@ -90,7 +90,7 @@ dataset_test = ATDImageDataset(root_dir='images/sorted_reduced/test', transform 
 dataloader_test = DataLoader(dataset_test, batch_size=32, shuffle=False)
 
 
-def normalize_dataset(dataloader, mean = None, std = None):
+def normalize_dataset(dataloader, path, mean = None, std = None):
     if mean is None:
         # Initialize variables to store the sum and std of pixel values
         mean = 0.0
@@ -123,14 +123,14 @@ def normalize_dataset(dataloader, mean = None, std = None):
 
 
     # Reload dataset with normalization
-    dataset = ATDImageDataset(root_dir='images/sorted_reduced/train', transform=transform)
+    dataset = ATDImageDataset(root_dir=path, transform=transform)
     dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
     return dataloader
 
-dataloader_train = normalize_dataset(dataloader_train)
+dataloader_train = normalize_dataset(dataloader_train, 'images/sorted_reduced/train')
 
-dataloader_test = normalize_dataset(dataloader_test)
+dataloader_test = normalize_dataset(dataloader_test, 'images/sorted_reduced/test')
 
 def train_model(model, dataloader, lr, decay):
     print('training model with lr = {}, weight decay = {}'.format(lr, momentum))
