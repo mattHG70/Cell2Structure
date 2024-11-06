@@ -17,24 +17,31 @@ import multiprocessing
 from PIL import Image
 
 
+#define the device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
+def get_fresh_model():
 # Load the pre-trained Inception V3 model
-model_raw = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
-model_raw.eval()
-
-
-#freeze all parameters
-for param in model_raw.parameters():
-    param.requires_grad = False
-
-#replace the last fc layer
-num_ftrs = model_raw.fc.in_features
-model_raw.fc = torch.nn.Linear(num_ftrs, 13) 
-
-#set parameters of last fc open for fine tunning
-for param in model_raw.fc.parameters():
-    param.requires_grad = True
+    model_raw = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
+    model_raw.eval()
     
+    
+    #freeze all parameters
+    for param in model_raw.parameters():
+        param.requires_grad = False
+    
+    #replace the last fc layer
+    num_ftrs = model_raw.fc.in_features
+    model_raw.fc = torch.nn.Linear(num_ftrs, 13) 
+    
+    #set parameters of last fc open for fine tunning
+    for param in model_raw.fc.parameters():
+        param.requires_grad = True
+
+    return model_raw
+
+
 class ATDImageDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         self.root_dir = root_dir
@@ -83,10 +90,10 @@ transform = transforms.Compose([
 ])
 
 
-dataset_train = ATDImageDataset(root_dir='images/sorted_reduced/train', transform = transform)
+dataset_train = ATDImageDataset(root_dir='/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images/sorted_reduced/train', transform = transform)
 dataloader_train = DataLoader(dataset_train, batch_size=32, shuffle=True)
 
-dataset_test = ATDImageDataset(root_dir='images/sorted_reduced/test', transform = transform)
+dataset_test = ATDImageDataset(root_dir='/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images/sorted_reduced/test', transform = transform)
 dataloader_test = DataLoader(dataset_test, batch_size=32, shuffle=False)
 
 
@@ -128,18 +135,15 @@ def normalize_dataset(dataloader, path, mean = None, std = None):
 
     return dataloader
 
-dataloader_train = normalize_dataset(dataloader_train, 'images/sorted_reduced/train')
+dataloader_train = normalize_dataset(dataloader_train, '/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images/sorted_reduced/train')
 
-dataloader_test = normalize_dataset(dataloader_test, 'images/sorted_reduced/test')
+# dataloader_test = normalize_dataset(dataloader_test, '/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images/sorted_reduced/test')
 
 def train_model(model, dataloader, lr, beta1):
-    print('training model with lr = {}, weight decay = {}'.format(lr, momentum))
+    print('training model with lr = {}, weight decay = {}'.format(lr, beta1))
     # Define  loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.fc.parameters(), lr=lr, betas=(beta1, 0.999))
-
-    #define the device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     #list to store losses
     losses = []
@@ -156,6 +160,7 @@ def train_model(model, dataloader, lr, beta1):
             inputs, labels = inputs.to(device), labels.to(device)  # Move data to the appropriate device
 
             optimizer.zero_grad()
+            # input_tensor = inputs.to(device)  # move data to GPU(s)
             outputs, _ = model(inputs)
             loss = criterion(outputs, labels)
             
@@ -170,17 +175,24 @@ def train_model(model, dataloader, lr, beta1):
 
     return model, losses
 
+
 model_name = 1
-for lr in [0.001, 0.01, 0.1, 1]:
-    for beta1 in [0.9, 0.8, 0.99]:
+for lr in [0.001]: #, 0.01, 0.1]:
+    # for beta1 in [0.9, 0.8, 0.99]:
+
+    model_raw = get_fresh_model()
+    beta1 = 0.9
+    # move model to GPU(s)
+    model_raw.to(device)
     
-        model, losses = train_model(model_raw, dataloader_train, beta1)
-        try:
-            torch.save(model.state_dict(), 'models/model{}/cnn'.format(model_name))
-        except:
-            os.makedirs(os.path.dirname('models/model{}/cnn'.format(model_name)))
-            torch.save(model.state_dict(), 'models/model{}/cnn'.format(model_name))
-        with open('models/model{}/losses'.format(model_name), "wb") as fp:   #Pickling
-            pickle.dump(losses, fp)
-        model_name += 1
+    model, losses = train_model(model_raw, dataloader_train, lr, beta1)
+    try:
+        torch.save(model.state_dict(), '/home/mhuebsch/siads699/Cell2Structure/models/model{}/cnn'.format(model_name))
+    except:
+        os.makedirs(os.path.dirname('/home/mhuebsch/siads699/Cell2Structure/models/model{}/cnn'.format(model_name)))
+        os.makedirs(os.path.dirname('/home/mhuebsch/siads699/Cell2Structure/models/model{}/losses'.format(model_name)))
+        torch.save(model.state_dict(), '/home/mhuebsch/siads699/Cell2Structure/models/model{}/cnn'.format(model_name))
+    with open('/home/mhuebsch/siads699/Cell2Structure/models/model{}/losses'.format(model_name), "wb") as fp:   #Pickling
+        pickle.dump(losses, fp)
+    model_name += 1
 
