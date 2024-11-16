@@ -41,7 +41,12 @@ In addition to the global configuration a project utilities Python module had be
 ## BBBC021 Dataset
 We used the publicly available [BBBC021 dataset](https://bbbc.broadinstitute.org/BBBC021) from the Broad Institute's Broad Bioimage Benchmark Collection [^1]. This dataset is mainly used for developing and comparing image-base profiling experiments. The dataset consists of CSV files contining the image metadata as well as the file names and 55 ZIP files containing the actual images.  
 In addition to the original metadata provided along with the images a second version got created containing manually labled MoAs based on DrugBank, ChEML and PubChem:  
-[BBBC021_final_enhanced_dataset.csv](data\processed\BBBC021_final_enhanced_dataset.csv)
+[BBBC021_final_enhanced_dataset.csv](data\processed\BBBC021_final_enhanced_dataset.csv)  
+
+!["DAPI Channel](images/image_dapi.jpg "DAPI Channel")
+![Tubulin Channel](images/image_tubulin.jpg "Tubulin Channel")
+![Actin Channel](images/image_actin_2.jpg "Actin Channel")  
+
 ### Downloading the images
 The images are download usin the following Linux shell script:  
 [get_bbbc021_images.sh](src/get_bbbc021_images.sh)  
