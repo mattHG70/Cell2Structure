@@ -32,7 +32,7 @@ _conda/mamba_
 conda env create -f environment.yml
 ```
 
-## Project Configuration File
+## Project Configuration
 The project uses global configuration file  
 [project_config.toml](project_config.toml)  
 This file contains paths, file names and parameters for most of the scripts.  
@@ -56,21 +56,51 @@ This script takes all 3 CSV files and merges it into one dataset which is used t
 An EDA had been conducted after downloading and preprocessing the CSV files. The analysis can be found in the notebook:  
 [Cell2Structure - Data Exploration](notebooks/BBBC021_data_exploration.ipynb)  
 
-# Classifier training attempt 1
-We originally intended to perform the classifier training using the jupyter notebook "notebooks/finetuning.ipynb". In this notebook, we retrain onyl the last fully connected layer. For this attempt, we organized the training data into a subfolder structure corresponding to the class label of each image. The notebook "notebooks/image_sorting.ipynb" contains the program to automatically sort the images into the right folder structure.
+## Classifier Training
+We first wanted to train the pre-trained model to enable the generation of more specific image embedding vectors. We took the performance of a classfier as a proxy for the quality of the embedding vectors.
+### Classifier training attempt 1
+We originally intended to perform the classifier training using the jupyter notebook:
+[finetuning.ipynb](notebooks/finetuning.ipynb)  
+In this notebook, we retrain onyl the last fully connected layer. For this attempt, we organized the training data into a subfolder structure corresponding to the class label of each image. Sorting the images into the right folder structure was done with the notebook:  
+[image_sorting.ipynb](notebooks/image_sorting.ipynb)  
+In addition to this notebook a command line Python script can also be used for this task:  
+[sort_images.py](src\sort_images.py)
 
-This apporach led to slow cross entropy loss decrease, and we therefore switched to another approach: we fine tuned the last convolutional layers of the CNN on our dataset in addition to training the last fully connected layer. 
+This apporach led to a slow cross entropy loss decrease, we therefore switched to another approach: we fine tuned the last convolutional layers of the CNN on our dataset in addition to training the last fully connected layer. 
 
-# Classifier training attempt 2
-We first identified which convolutional layers made most sense to fine tune, in the notebook "notebooks/CNN_features_visualization.ipynb". We then unfroze the weights of these layers to retrain them. 
+### Classifier training attempt 2
+We first identified which convolutional layers made most sense to fine tune using the notebook:  
+[CNN_features_visualization.ipynb](notebooks/CNN_features_visualization.ipynb)  
+We then unfroze the weights of these layers and retrained the model.  
+Multiple models had been created using different parameters. The model training was executed on different HPC clusters. The following scripts represent the execution on the GreatLakes cluster using 1 GPU:  
+
+
 We then switched from a jupyter notebook to a .py script to finetune the model using a GPU. The script is available in "src/model_finetuning.py". 
 
-# Embedding generation
+## Embedding generation
+From our trained models we chose the following ones:  
+* model  
 
-# Embedding clustering
-Embedding clustering was performed in notebook "notebooks/Embedding_clustering.ipynb"
+The generation of the image embedding vectors was exectued on the HPC using 1 GPU:  
+*script*  
+*script*  
 
-# Chemical structure of compounds exploration
-Exploration of the compounds chemical structure was performed in notebooks "notebooks/Compound_similarity_analysis.ipynb" and "notebooks/Compound_similarity_analysis_descr.ipynb"
+## Embedding clustering
+Embedding clustering was performed in the following notebook:  
+[Embedding_clustering.ipynb](notebooks/Embedding_clustering.ipynb)  
+
+## Chemical structure exploration and analysis
+The chemical structurs were analysed based on 2 different ... :
+* Molecular fingerprints: Morgan fingerprints, radius = 2, length = 2048
+* Full set of RDKit molecular descriptors  
+
+Script for the creation of the molecular fingerprints:  
+[calc_chemical_fps.py](src\calc_chemical_fps.py)  
+Script for the creattion of the RDKit descriptors:  
+[calc_chemical_props.py](src\calc_chemical_props.py)  
+Exploration and analzysis happened in the following notebboks:  
+[Compound_similarity_analysis.ipynb](notebooks/Compound_similarity_analysis.ipynb) - Molecular fingerprints  
+[Compound_similarity_analysis_descr.ipynb](notebooks/Compound_similarity_analysis_descr.ipynb) - RDKit descriptors  
+
 
 [^1]: We used image set [BBBC021v1](https://bbbc.broadinstitute.org/bbbc/BBBC021) [[Caie et al., Molecular Cancer Therapeutics, 2010](http://dx.doi.org/10.1158/1535-7163.MCT-09-1148)], available from the Broad Bioimage Benchmark Collection [[Ljosa et al., Nature Methods, 2012](http://dx.doi.org/10.1038/nmeth.2083)].
