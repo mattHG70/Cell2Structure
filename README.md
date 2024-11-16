@@ -37,7 +37,7 @@ The project uses global configuration file
 [project_config.toml](project_config.toml)  
 This file contains paths, file names and parameters for most of the scripts.  
 In addition to the global configuration a project utilities Python module had been created  
-[project_utils.py](src\project_utils.py)
+[project_utils.py](src/project_utils.py)
 ## BBBC021 Dataset
 We used the publicly available [BBBC021 dataset](https://bbbc.broadinstitute.org/BBBC021) from the Broad Institute's Broad Bioimage Benchmark Collection [^1]. This dataset is mainly used for developing and comparing image-base profiling experiments. The dataset consists of CSV files contining the image metadata as well as the file names and 55 ZIP files containing the actual images.  
 In addition to the original metadata provided along with the images a second version got created containing manually labled MoAs based on DrugBank, ChEML and PubChem:  
@@ -69,7 +69,7 @@ We originally intended to perform the classifier training using the jupyter note
 In this notebook, we retrain onyl the last fully connected layer. For this attempt, we organized the training data into a subfolder structure corresponding to the class label of each image. Sorting the images into the right folder structure was done with the notebook:  
 [image_sorting.ipynb](notebooks/image_sorting.ipynb)  
 In addition to this notebook a command line Python script can also be used for this task:  
-[sort_images.py](src\sort_images.py)
+[sort_images.py](src/sort_images.py)
 
 This apporach led to a slow cross entropy loss decrease, we therefore switched to another approach: we fine tuned the last convolutional layers of the CNN on our dataset in addition to training the last fully connected layer. 
 
@@ -100,9 +100,9 @@ The chemical structurs were analysed based on 2 different ... :
 * Full set of RDKit molecular descriptors  
 
 Script for the creation of the molecular fingerprints:  
-[calc_chemical_fps.py](src\calc_chemical_fps.py)  
+[calc_chemical_fps.py](src/calc_chemical_fps.py)  
 Script for the creattion of the RDKit descriptors:  
-[calc_chemical_props.py](src\calc_chemical_props.py)  
+[calc_chemical_props.py](src/calc_chemical_props.py)  
 Exploration and analzysis happened in the following notebboks:  
 [Compound_similarity_analysis.ipynb](notebooks/Compound_similarity_analysis.ipynb) - Molecular fingerprints  
 [Compound_similarity_analysis_descr.ipynb](notebooks/Compound_similarity_analysis_descr.ipynb) - RDKit descriptors  
