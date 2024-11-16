@@ -1,4 +1,5 @@
 # Cell2Structure
+![Cell2Structure Logo](images/Cell2Structure_logo.jpg "Cell2Structure Logo")
 Capstone project (SIADS-699) as part of the MADS program of the University of Michigan, School of Information
 
 # Introduction
