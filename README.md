@@ -43,9 +43,9 @@ We used the publicly available [BBBC021 dataset](https://bbbc.broadinstitute.org
 In addition to the original metadata provided along with the images a second version got created containing manually labled MoAs based on DrugBank, ChEML and PubChem:  
 [BBBC021_final_enhanced_dataset.csv](data\processed\BBBC021_final_enhanced_dataset.csv)  
 
-!["DAPI Channel](images/image_dapi.jpg "DAPI Channel")
-![Tubulin Channel](images/image_tubulin.jpg "Tubulin Channel")
-![Actin Channel](images/image_actin_2.jpg "Actin Channel")  
+!["DAPI Channel](images/image_dapi_a.jpg "DAPI Channel")
+![Tubulin Channel](images/image_tubulin_a.jpg "Tubulin Channel")
+![Actin Channel](images/image_actin_2_a.jpg "Actin Channel")  
 
 ### Downloading the images
 The images are download usin the following Linux shell script:  
