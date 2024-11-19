@@ -1,3 +1,4 @@
+import re
 import argparse
 
 import pandas as pd
@@ -16,7 +17,7 @@ def main():
     df_embed_vec = pd.read_csv(args.infile)
 
     # split in data and batches (plates)
-    vec_cols = [c for c in df_merged.columns if re.match(r"[DTA]\d+", c)]
+    vec_cols = [c for c in df_embed_vec.columns if re.match(r"[V]\d+", c)]
     data = df_embed_vec[vec_cols]
     batches = df_embed_vec.loc[:, "Image_Metadata_Plate_DAPI"]
     
