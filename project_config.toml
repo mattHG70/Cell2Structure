@@ -33,3 +33,11 @@ file_enhanced = "BBBC021_final_enhanced_dataset.csv"
 [Moragen_FP_params]
 radius = 2
 size = 2048
+
+# training properties
+[training]
+logfile = "/home/mhuebsch/siads699/training_logs/model_training.log"
+dataset = "/home/mhuebsch/siads699/Cell2Structure/data/processed/BBBC021_final_original_dataset.csv"
+imagefiles = "/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images"
+resultdir = "/home/mhuebsch/siads699/Cell2Structure/models/losses"
+modeldir = "/home/mhuebsch/siads699/Cell2Structure/models"
