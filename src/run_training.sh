@@ -5,16 +5,14 @@
 #SBATCH --job-name=team6_training
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=16g
+#SBATCH --mem-per-cpu=32g
 #SBATCH --account=siads699f24_class
 #SBATCH --mail-user mhuebsch@umich.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks-per-gpu=1
-#SBATCH --gpus=1
-#SBATCH --gpus-per-node=1
-#SBATCH --time=06:30:00
+#SBATCH --time=04:00:00
 #SBATCH --output=/home/%u/siads699/%x-%j.log
 #SBATCH --error=/home/%u/siads699/error-%x-%j.log
 
@@ -36,7 +34,7 @@ echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] Starting the workflow
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] We got the following cores: $CUDA_VISIBLE_DEVICES
 
 # set device to "cuda" to enable gpu usage
-python model_finetuning.py
+python model_training.py -bit_depth 8 -n_epochs 20 -batch_size 32 -learning_rate 0.0001 -config /home/mhuebscch/siads699/Cell2Structure/project_config.toml
 
 EXITCODE=$?
 
