@@ -47,12 +47,12 @@ In addition to the original metadata provided along with the images a second ver
 |------------|---------------|-------------|
 |!["DAPI Channel](images/image_dapi_a.jpg "DAPI Channel")|![Tubulin Channel](images/image_tubulin_a.jpg "Tubulin Channel")|![Actin Channel](images/image_actin_2_a.jpg "Actin Channel")|
 
-### Downloading the images
+### Downloading the Images
 The images are download usin the following Linux shell script:  
 [get_bbbc021_images.sh](src/get_bbbc021_images.sh)  
 Downloading and unzipping the image files can take up to 30 min or longer, therefore this script is meant to run as SLURM batch job. It uses the setup of UMICH GreatLakes cluster. Running it in another environment need changes to the paths specified in the script.  
 
-### Downloading and preprocessing the metadata
+### Downloading and Preprocessing the Metadata
 The following Python script downloads the metadata CSV files:  
 [get_dataset.py](src/get_dataset.py)  
 After downloading the CSV files the preprocessing is done via the Python script:  
@@ -88,7 +88,7 @@ We then switched from a jupyter notebook to a .py script to finetune the model u
 The model finetuing was executed on a HPC cluster. The following script was used on the UMICH GreatLakes cluster:  
 [run_training.sh](src/run_training.sh)  
 
-## Embedding generation
+## Embedding Generation
 From our trained models we chose the following ones:  
 * Inception V3 base model
 * Inception V3 training the last 2 mixture layers
@@ -104,14 +104,14 @@ After generating the image embeddings we applied a batch correction to correct d
 The batch corrected image embeddings were merged back into the BBBC021 dataset using the following script:  
 [merge_embeddings.py](src/merge_embeddings.py)  
 
-## Embedding clustering and analysis
+## Embedding Clustering and Analysis
 Embedding clustering was performed in the following notebook:  
 [Embedding_clustering.ipynb](notebooks/Embedding_clustering.ipynb)  
 
 Analysing the embedding vectors was performed in the follwoing notebook:  
 [Analyze_Embed_Vectors.ipynb](notebooks/Analyze_Embed_Vectors.ipynb)
 
-## Chemical structure exploration and analysis
+## Chemical Structure Exploration and Analysis
 
 |MG-132|Nocodazole|Etoposide|
 |------------|---------|----------|
