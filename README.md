@@ -51,18 +51,21 @@ In addition to the original metadata provided along with the images a second ver
 The images are download usin the following Linux shell script:  
 [get_bbbc021_images.sh](src/get_bbbc021_images.sh)  
 Downloading and unzipping the image files can take up to 30 min or longer, therefore this script is meant to run as SLURM batch job. It uses the setup of UMICH GreatLakes cluster. Running it in another environment need changes to the paths specified in the script.  
+
 ### Downloading and preprocessing the metadata
 The following Python script downloads the metadata CSV files:  
 [get_dataset.py](src/get_dataset.py)  
 After downloading the CSV files the preprocessing is done via the Python script:  
 [preproc_dataset.py](src/preproc_dataset.py)  
 This script takes all 3 CSV files and merges it into one dataset which is used throughout the project.
+
 ### Data Exploration
 An EDA had been conducted after downloading and preprocessing the CSV files. The analysis can be found in the notebook:  
-[Cell2Structure - Data Exploration](notebooks/BBBC021_data_exploration.ipynb)  
+[BBBC021_data_exploration.ipynb](notebooks/BBBC021_data_exploration.ipynb)  
 
 ## Classifier Training
 We first wanted to train the pre-trained model to enable the generation of more specific image embedding vectors. We took the performance of a classfier as a proxy for the quality of the embedding vectors.
+
 ### Classifier training attempt 1
 We originally intended to perform the classifier training using the jupyter notebook:
 [finetuning.ipynb](notebooks/finetuning.ipynb)  
@@ -126,5 +129,7 @@ Exploration and analzysis happened in the following notebboks:
 [Compound_similarity_analysis.ipynb](notebooks/Compound_similarity_analysis.ipynb) - Molecular fingerprints  
 [Compound_similarity_analysis_descr.ipynb](notebooks/Compound_similarity_analysis_descr.ipynb) - RDKit descriptors  
 
+## Availability of Intermediate and Final Model and Embedding Files
+Our repositroy doesn't contain intermediate and final datasets containing the image embeddings as well as the exported PyTorch model files. This is due to the size of these files and the storage limitations in this type of GitHub repository.  
 
 [^1]: We used image set [BBBC021v1](https://bbbc.broadinstitute.org/bbbc/BBBC021) [[Caie et al., Molecular Cancer Therapeutics, 2010](http://dx.doi.org/10.1158/1535-7163.MCT-09-1148)], available from the Broad Bioimage Benchmark Collection [[Ljosa et al., Nature Methods, 2012](http://dx.doi.org/10.1038/nmeth.2083)].
