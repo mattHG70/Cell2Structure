@@ -81,9 +81,9 @@ Multiple models had been created using different parameters. The model training 
 
 
 We then switched from a jupyter notebook to a .py script to finetune the model using a GPU:  
-[model_training.py](src\model_training.py)  
+[model_training.py](src/model_training.py)  
 The model finetuing was executed on a HPC cluster. The following script was used on the UMICH GreatLakes cluster:  
-[run_training.sh](src\run_training.sh)  
+[run_training.sh](src/run_training.sh)  
 
 ## Embedding generation
 From our trained models we chose the following ones:  
@@ -96,23 +96,23 @@ The generation of the image embedding vectors was exectued on the HPC cluster ap
 *script*  
 
 After generating the image embeddings we applied a batch correction to correct differences based on experimental conditions:  
-[batchcorr_img_vectors.py](src\batchcorr_img_vectors.py)  
+[batchcorr_img_vectors.py](src/batchcorr_img_vectors.py)  
 
 The batch corrected image embeddings were merged back into the BBBC021 dataset using the following script:  
-[merge_embeddings.py](src\merge_embeddings.py)  
+[merge_embeddings.py](src/merge_embeddings.py)  
 
 ## Embedding clustering and analysis
 Embedding clustering was performed in the following notebook:  
 [Embedding_clustering.ipynb](notebooks/Embedding_clustering.ipynb)  
 
 Analysing the embedding vectors was performed in the follwoing notebook:  
-[Analyze_Embed_Vectors.ipynb](notebooks\Analyze_Embed_Vectors.ipynb)
+[Analyze_Embed_Vectors.ipynb](notebooks/Analyze_Embed_Vectors.ipynb)
 
 ## Chemical structure exploration and analysis
 
 |MG-132|Nocodazole|Etoposide|
 |------------|---------|----------|
-|![MG-132](images\structures\MG-132.png "MG-132")|![Nocodazole](images\structures\nocodazole.png "Nocodazole")|![Etoposide](images\structures\etoposide.png "Etoposide")|
+|![MG-132](images/structures/MG-132.png "MG-132")|![Nocodazole](images/structures/nocodazole.png "Nocodazole")|![Etoposide](images/structures/etoposide.png "Etoposide")|
 
 The chemical structurs were analysed based on 2 different ... :
 * Molecular fingerprints: Morgan fingerprints, radius = 2, length = 2048
