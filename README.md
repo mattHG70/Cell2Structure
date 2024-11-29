@@ -102,6 +102,8 @@ From our trained models we chose the following ones:
 
 The generation of the image embedding vectors was exectued on the HPC cluster applying a GPU:  
 [generate_embeddings.py](src/generate_embeddings.py)  
+It uses the same `capstone_dataset` and `capstone_transfomrs` Python modules as the model training.  
+
 The following script was used on the UMICH GreatLakes cluster to schedule the job:  
 [run_embd_generation.sh](src/run_embd_generation.sh)  
 
