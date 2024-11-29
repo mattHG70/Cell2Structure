@@ -177,7 +177,7 @@ def eval_model(model, dataloader, criterion, device):
 
 def save_model(model, batch_size=32, n_epochs=30, learning_rate=0.001, bit_depth=8, unfreeze_mixed=1):
     path = project_config["training"]["modeldir"]
-    model_name = f"capstone_model_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(unfreeze_mixed)}_[str(bit_depth)}.pt"
+    model_name = f"capstone_model_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(unfreeze_mixed)}_{str(bit_depth)}.pt"
     torch.save(model.state_dict(), os.path.join(path, model_name))
 
 
@@ -192,17 +192,17 @@ parser.add_argument("-bit_depth",
 parser.add_argument("-n_epochs", 
                     type=int, 
                     required=False,
-                    default=20
+                    default=20,
                     help="Number of training epochs")
 parser.add_argument("-batch_size", 
                     type=int, 
                     required=False,
-                    default=32
+                    default=32,
                     help="Batch size for mini batch training")
 parser.add_argument("-learning_rate", 
-                    type=int, 
+                    type=float, 
                     required=False,
-                    default=0.0001
+                    default=0.0001,
                     help="Learning rate")
 parser.add_argument('-config', 
                     type=str, 

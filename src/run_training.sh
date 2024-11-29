@@ -29,12 +29,14 @@ module load cuda cudnn
 # activate custom conda environment
 mamba activate capstone
 
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
 START=`date +%s`; STARTDATE=`date`;
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] Starting the workflow
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] We got the following cores: $CUDA_VISIBLE_DEVICES
 
 # set device to "cuda" to enable gpu usage
-python model_training.py -bit_depth 8 -n_epochs 20 -batch_size 32 -learning_rate 0.0001 -config /home/mhuebscch/siads699/Cell2Structure/project_config.toml
+python model_training.py -bit_depth 8 -n_epochs 20 -batch_size 64 -learning_rate 0.0001 -config /home/mhuebsch/siads699/Cell2Structure/project_config.toml
 
 EXITCODE=$?
 
