@@ -1,7 +1,7 @@
 import os
 # import cv2
 import argparse
-import logging
+# import logging
 
 import pandas as pd
 import numpy as np
@@ -11,7 +11,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-import torchvision
+# import torchvision
 # from torchvision import transforms
 # from torchvision.transforms import v2
 import torchvision.models as models
@@ -178,6 +178,7 @@ def main():
             output = model(images)
             embd_batch = output["avgpool"].detach().cpu()
             embd_vecs = np.append(embd_vecs, embd_batch.flatten(start_dim=1).numpy(), axis=0)
+            break
 
     np.save(args.output_path, embd_vecs, allow_pickle=False)
 
