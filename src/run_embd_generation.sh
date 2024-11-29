@@ -37,7 +37,9 @@ echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] Starting the workflow
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] We got the following cores: $CUDA_VISIBLE_DEVICES
 
 # set device to "cuda" to enable gpu usage
-python generate_embeddings.py -dataset_path ../BBBC021_final_original_dataset.csv -model_path ../data_augment/models/capstone_model_32_25_0.0001_1_16.pt -bit_depth 16
+python generate_embeddings.py -dataset_path ../BBBC021_final_original_dataset.csv \
+                              -model_path ../data_augment/models/capstone_model_32_25_0.0001_1_16.pt \
+                              -bit_depth 16
 
 EXITCODE=$?
 
