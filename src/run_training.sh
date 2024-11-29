@@ -42,6 +42,7 @@ python model_training.py -bit_depth 8 \
                          -learning_rate 0.0001 \
                          -data_augment False \
                          -unfreeze True \
+                         -model_type l2l \
                          -config /home/mhuebsch/siads699/Cell2Structure/project_config.toml
 
 EXITCODE=$?

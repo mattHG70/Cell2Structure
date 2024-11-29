@@ -173,9 +173,13 @@ def eval_model(model, dataloader, criterion, device):
     return losses, accuracy
 
 
-def save_model(model, batch_size=32, n_epochs=30, learning_rate=0.001, bit_depth=8, unfreeze_mixed=1):
+def save_model(model, model_type="base", batch_size=32, n_epochs=30, learning_rate=0.001, bit_depth=8, unfreeze_mixed=True):
     path = project_config["training"]["modeldir"]
-    model_name = f"capstone_model_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(unfreeze_mixed)}_{str(bit_depth)}.pt"
+    model_name = None
+    if unfreeze_mixed:
+        model_name = f"capstone_model_{model_type}_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(unfreeze_mixed)}_{str(bit_depth)}_unfreeze.pt"
+    else:
+        model_name = f"capstone_model_{model_type}_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(unfreeze_mixed)}_{str(bit_depth)}.pt"
     torch.save(model.state_dict(), os.path.join(path, model_name))
 
 
@@ -212,6 +216,11 @@ parser.add_argument("-data_augment",
                     required=False,
                     default=False,
                     help="Add data augmentation")
+parser.add_argument("-model_type", 
+                    type=str, 
+                    required=False,
+                    default="base",
+                    help="Type of the model to be trained")
 parser.add_argument('-config', 
                     type=str, 
                     required=False, 
@@ -318,12 +327,23 @@ def main():
 
     df_results = pd.DataFrame.from_records(results, columns=["epoch", "training loss", "training accuracy", "eval loss", "eval accuracy"])
     results_path = project_config["training"]["resultdir"]
-    results_fn = f"capstone_results_{str(batch_size)}_{str(n_epochs)}_{str(learning_rate)}_{str(bit_depth)}.csv"
+    results_fn = None
+    if args.unfreeze:
+        results_fn = f"capstone_results_{args.model_type}_{str(args.atch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}_unfreeze.csv"
+    else:
+        results_fn = f"capstone_results_{args.model_type}_{str(args.atch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}.csv"
+
     df_results.to_csv(os.path.join(results_path, results_fn), index=False)
 
     logger.debug("-----------------------------------------------------------")
 
-    save_model(model, batch_size=batch_size, n_epochs=n_epochs, learning_rate=learning_rate, bit_depth=bit_depth, unfreeze_mixed=1)
+    save_model(model,
+               model_type=args.model_type,
+               batch_size=args.batch_size, 
+               n_epochs=args.n_epochs, 
+               learning_rate=args.learning_rate, 
+               bit_depth=args.bit_depth, 
+               unfreeze_mixed=args.unfreeze)
 
 
 if __name__ == "__main__":
