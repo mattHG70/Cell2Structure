@@ -95,8 +95,9 @@ From our trained models we chose the following ones:
 * Inception V3 traingin the last 2 mixture layers and applying data augmentation to the input images (random flip, horizontal and vertical)  
 
 The generation of the image embedding vectors was exectued on the HPC cluster applying a GPU:  
-*script*  
-*script*  
+[generate_embeddings.py](src/generate_embeddings.py)  
+The following script was used on the UMICH GreatLakes cluster to schedule the job:  
+[run_embd_generation.sh](src/run_embd_generation.sh)  
 
 After generating the image embeddings we applied a batch correction to correct differences based on experimental conditions:  
 [batchcorr_img_vectors.py](src/batchcorr_img_vectors.py)  
