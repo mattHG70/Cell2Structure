@@ -1,23 +1,15 @@
-import os
-# import cv2
 import argparse
-# import logging
 
 import pandas as pd
 import numpy as np
 
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-# import torchvision
-# from torchvision import transforms
-# from torchvision.transforms import v2
 import torchvision.models as models
 from torchvision.models.feature_extraction import create_feature_extractor
 
-import project_utils as utl
 import capstone_dataset as cds
 import capstone_transforms as trn
 
@@ -57,91 +49,19 @@ parser.add_argument("-base_model",
 args = parser.parse_args()
 
 
-# class CapstoneDataset(Dataset):
-#     def __init__(self, metadata_file, image_dir, bit_depth=8, ds_type="train", transforms=None, target_transforms=None):
-#         df = pd.read_csv(metadata_file)
-
-#         moas = df["Image_Metadata_MoA"].unique()
-#         moas = moas[~pd.isnull(moas)]
-
-#         self.class_dir = dict(zip(np.sort(moas), range(len(moas))))
-#         self.classes = self.class_dir.keys()
-
-#         df_train, df_val, df_test = utl.create_train_test_val_sets(df)
-#         if ds_type == "train":
-#             self.metadata = df_train
-#         elif ds_type == "val":
-#             self.metadata = df_val
-#         elif ds_type == "test":
-#             self.metadata = df_test
-#         elif ds_type == "full":
-#             self.metadata = df[df["Image_Metadata_MoA"].notna()]
-#         else:
-#             self.metadata = df_test
-
-#         self.image_dir = image_dir
-#         self.transforms = transforms
-#         self.target_transforms = target_transforms
-#         self.bit_depth = bit_depth
-
-#     def __len__(self):
-#         return len(self.metadata)
-
-#     def __getitem__(self, idx):
-#         img_dapi_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 2]
-#         )
-#         img_tubulin_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 4]
-#         )
-#         img_actin_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 6]
-#         )
-
-#         image = None
-#         if self.bit_depth == 8:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-
-#             image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
-#             image /= 255.0
-#         elif self.bit_depth == 16:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-
-#             image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
-#             image /= 65535.0
-#         else:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-
-#             image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
-#             image /= 255.0
-
-#         if self.transforms:
-#             image = self.transforms(image)
-
-#         # label = self.class_dir[self.metadata.iloc[idx, 13]]
-
-#         return image, -9
-
-
 def load_model(path, device, n_classes=13, original_model=False):
     pt_model = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
     
     if original_model:
         num_ftrs = pt_model.fc.in_features
-        pt_model.fc = torch.nn.Linear(num_ftrs, n_classes)
+        pt_model.fc = nn.Linear(num_ftrs, n_classes)
     else:
         if device == "cpu":
             pretrained_weights = torch.load(path, map_location=torch.device("cpu"))
         else:
             pretrained_weights = torch.load(path)
         num_ftrs = pt_model.fc.in_features
-        pt_model.fc = torch.nn.Linear(num_ftrs, n_classes)
+        pt_model.fc = nn.Linear(num_ftrs, n_classes)
         pt_model.load_state_dict(pretrained_weights, assign=True)
 
 
@@ -178,7 +98,6 @@ def main():
             output = model(images)
             embd_batch = output["avgpool"].detach().cpu()
             embd_vecs = np.append(embd_vecs, embd_batch.flatten(start_dim=1).numpy(), axis=0)
-            break
 
     np.save(args.output_path, embd_vecs, allow_pickle=False)
 
