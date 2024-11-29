@@ -29,7 +29,7 @@ module load cuda cudnn
 # activate custom conda environment
 mamba activate capstone
 
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 START=`date +%s`; STARTDATE=`date`;
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] Starting the workflow

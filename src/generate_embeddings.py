@@ -151,25 +151,9 @@ def load_model(path, device, n_classes=13, original_model=False):
 
 
 def main():
-    # basic logging
-    # logging.basicConfig(filename="/home/huebsma1/siads699/generate_embeddings.log",
-                        # format='%(message)s',
-                        # filemode='w')
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-
     batch_size = args.batch_size
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.debug(f"Use device: {device}")
-    logger.debug(f"Load model: {args.model_path}")
-
-    
-
-    # transforms = v2.Compose([v2.ToImage(),
-    #                         v2.Resize((1024, 1024)), 
-    #                         v2.ToDtype(torch.float32, scale=True),
-    #                         v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
     transforms = trn.get_transform(size=1024)
 
@@ -186,8 +170,6 @@ def main():
     model.to(device)
     model.eval()
 
-    logger.debug("Start processing images")
-    images_processed = 0
     embd_vecs = np.empty((0, 2048))
 
     with torch.no_grad():
@@ -196,12 +178,6 @@ def main():
             output = model(images)
             embd_batch = output["avgpool"].detach().cpu()
             embd_vecs = np.append(embd_vecs, embd_batch.flatten(start_dim=1).numpy(), axis=0)
-            images_processed += len(images)
-
-            if i % 20 == 0:
-                logger.debug(f"{str(images_processed)} images processed")
-
-    logger.debug("Finish processing images")
 
     np.save(args.output_path, embd_vecs, allow_pickle=False)
 
