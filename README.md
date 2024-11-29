@@ -38,6 +38,7 @@ The project uses global configuration file
 This file contains paths, file names and parameters for most of the scripts.  
 In addition to the global configuration a project utilities Python module had been created  
 [project_utils.py](src/project_utils.py)
+
 ## BBBC021 Dataset
 We used the publicly available [BBBC021 dataset](https://bbbc.broadinstitute.org/BBBC021) from the Broad Institute's Broad Bioimage Benchmark Collection [^1]. This dataset is mainly used for developing and comparing image-base profiling experiments. The dataset consists of CSV files contining the image metadata as well as the file names and 55 ZIP files containing the actual images.  
 In addition to the original metadata provided along with the images a second version got created containing manually labled MoAs based on DrugBank, ChEML and PubChem:  
@@ -85,6 +86,11 @@ Multiple models had been created using different parameters. The model training 
 
 We then switched from a jupyter notebook to a .py script to finetune the model using a GPU:  
 [model_training.py](src/model_training.py)  
+Two additional Python modules were used in model training script:  
+* [capstone_dataset.py](src/capstone_dataset.py) - Python class implenting a PyTroch Dataset
+* [capstone_transforms.py](src/capstone_transforms.py) - Python module implementing various transformations applied to the input images  
+
+
 The model finetuing was executed on a HPC cluster. The following script was used on the UMICH GreatLakes cluster:  
 [run_training.sh](src/run_training.sh)  
 
