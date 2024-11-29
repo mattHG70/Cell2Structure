@@ -19,76 +19,6 @@ import project_utils as utl
 import capstone_dataset as cds
 import capstone_transforms as trn
 
-# class CapstoneDataset(Dataset):
-#     def __init__(self, metadata_file, image_dir, ds_type="train", bit_depth=8, transforms=None, target_transforms=None):
-#         df = pd.read_csv(metadata_file)
-
-#         moas = df["Image_Metadata_MoA"].unique()
-#         moas = moas[~pd.isnull(moas)]
-
-#         self.class_dir = dict(zip(np.sort(moas), range(len(moas))))
-#         self.classes = self.class_dir.keys()
-
-#         df_train, df_val, df_test = utl.create_train_test_val_sets(df)
-#         if ds_type == "train":
-#             self.metadata = df_train
-#         elif ds_type == "val":
-#             self.metadata = df_val
-#         elif ds_type == "test":
-#             self.metadata = df_test
-#         elif ds_type == "full":
-#             self.metadata = df[df["Image_Metadata_MoA"].notna()]
-#         else:
-#             self.metadata = df_test
-
-#         self.image_dir = image_dir
-#         self.transforms = transforms
-#         self.target_transforms = target_transforms
-#         self.bit_depth = bit_depth
-
-#     def __len__(self):
-#         return len(self.metadata)
-
-#     def __getitem__(self, idx):
-#         img_dapi_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 2]
-#         )
-#         img_tubulin_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 4]
-#         )
-#         img_actin_path = os.path.join(
-#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 6]
-#         )
-
-#         if self.bit_depth == 8:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#         elif self.bit_depth == 16:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-#         else:
-#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-
-#         image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
-
-#         if self.bit_depth == 8:
-#             image /= 255.0
-#         elif self.bit_depth == 16:
-#             image /= 65535.0
-#         else:
-#             image /= 255.0
-
-#         if self.transforms:
-#             image = self.transforms(image)
-
-#         label = self.class_dir[self.metadata.iloc[idx, 13]]
-
-#         return image, label
-
 
 def get_new_model(n_classes=13, unfreeze_mixed=True):
     base_model = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
@@ -252,11 +182,6 @@ def main():
     else:
         transforms = trn.get_transform(size=1024)
 
-    # transforms = v2.Compose([v2.ToImage(),
-    #                         v2.Resize((1024, 1024), antialias=True), 
-    #                         v2.ToDtype(torch.float32, scale=True),
-    #                         v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
-
     # basic logging
     logging.basicConfig(filename=project_config["training"]["logfile"],
                         format='%(message)s',
@@ -274,14 +199,6 @@ def main():
         transforms=transforms, 
         target_transforms=None
     )
-    # training_data = CapstoneDataset(
-    #     dataset, 
-    #     img_dir, 
-    #     ds_type="train",
-    #     bit_depth=bit_depth,
-    #     transforms=transforms, 
-    #     target_transforms=None
-    # )
 
     validation_data = cds.CapstoneDataset(
         dataset, 
@@ -291,14 +208,6 @@ def main():
         transforms=transforms, 
         target_transforms=None
     )
-    # validation_data = CapstoneDataset(
-    #     dataset, 
-    #     img_dir, 
-    #     ds_type="val",
-    #     bit_depth=bit_depth,
-    #     transforms=transforms, 
-    #     target_transforms=None
-    # )
 
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(validation_data, batch_size=batch_size, shuffle=False)
@@ -329,9 +238,9 @@ def main():
     results_path = project_config["training"]["resultdir"]
     results_fn = None
     if args.unfreeze:
-        results_fn = f"capstone_results_{args.model_type}_{str(args.atch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}_unfreeze.csv"
+        results_fn = f"capstone_results_{args.model_type}_{str(args.batch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}_unfreeze.csv"
     else:
-        results_fn = f"capstone_results_{args.model_type}_{str(args.atch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}.csv"
+        results_fn = f"capstone_results_{args.model_type}_{str(args.batch_size)}_{str(args.n_epochs)}_{str(args.learning_rate)}_{str(args.bit_depth)}.csv"
 
     df_results.to_csv(os.path.join(results_path, results_fn), index=False)
 
