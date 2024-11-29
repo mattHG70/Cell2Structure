@@ -1,95 +1,93 @@
 import os
-import re
 import pandas as pd
 import numpy as np
 
 import argparse
 import logging
 
-import cv2
+# import cv2
 
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset
+# from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-import torchvision
-from torchvision import transforms
-from torchvision.transforms import v2
+# from torchvision.transforms import v2
 import torchvision.models as models
 
 import project_utils as utl
+import capstone_dataset as cds
+import capstone_transforms as trn
 
+# class CapstoneDataset(Dataset):
+#     def __init__(self, metadata_file, image_dir, ds_type="train", bit_depth=8, transforms=None, target_transforms=None):
+#         df = pd.read_csv(metadata_file)
 
-class CapstoneDataset(Dataset):
-    def __init__(self, metadata_file, image_dir, ds_type="train", bit_depth=8, transforms=None, target_transforms=None):
-        df = pd.read_csv(metadata_file)
+#         moas = df["Image_Metadata_MoA"].unique()
+#         moas = moas[~pd.isnull(moas)]
 
-        moas = df["Image_Metadata_MoA"].unique()
-        moas = moas[~pd.isnull(moas)]
+#         self.class_dir = dict(zip(np.sort(moas), range(len(moas))))
+#         self.classes = self.class_dir.keys()
 
-        self.class_dir = dict(zip(np.sort(moas), range(len(moas))))
-        self.classes = self.class_dir.keys()
+#         df_train, df_val, df_test = utl.create_train_test_val_sets(df)
+#         if ds_type == "train":
+#             self.metadata = df_train
+#         elif ds_type == "val":
+#             self.metadata = df_val
+#         elif ds_type == "test":
+#             self.metadata = df_test
+#         elif ds_type == "full":
+#             self.metadata = df[df["Image_Metadata_MoA"].notna()]
+#         else:
+#             self.metadata = df_test
 
-        df_train, df_val, df_test = utl.create_train_test_val_sets(df)
-        if ds_type == "train":
-            self.metadata = df_train
-        elif ds_type == "val":
-            self.metadata = df_val
-        elif ds_type == "test":
-            self.metadata = df_test
-        elif ds_type == "full":
-            self.metadata = df[df["Image_Metadata_MoA"].notna()]
-        else:
-            self.metadata = df_test
+#         self.image_dir = image_dir
+#         self.transforms = transforms
+#         self.target_transforms = target_transforms
+#         self.bit_depth = bit_depth
 
-        self.image_dir = image_dir
-        self.transforms = transforms
-        self.target_transforms = target_transforms
-        self.bit_depth = bit_depth
+#     def __len__(self):
+#         return len(self.metadata)
 
-    def __len__(self):
-        return len(self.metadata)
+#     def __getitem__(self, idx):
+#         img_dapi_path = os.path.join(
+#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 2]
+#         )
+#         img_tubulin_path = os.path.join(
+#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 4]
+#         )
+#         img_actin_path = os.path.join(
+#             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 6]
+#         )
 
-    def __getitem__(self, idx):
-        img_dapi_path = os.path.join(
-            self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 2]
-        )
-        img_tubulin_path = os.path.join(
-            self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 4]
-        )
-        img_actin_path = os.path.join(
-            self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 6]
-        )
+#         if self.bit_depth == 8:
+#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#         elif self.bit_depth == 16:
+#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
+#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
+#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
+#         else:
+#             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
 
-        if self.bit_depth == 8:
-            img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-            img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-            img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-        elif self.bit_depth == 16:
-            img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-            img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-            img_actin = cv2.imread(img_actin_path, cv2.IMREAD_UNCHANGED).astype(np.float32)
-        else:
-            img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-            img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-            img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+#         image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
 
-        image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
+#         if self.bit_depth == 8:
+#             image /= 255.0
+#         elif self.bit_depth == 16:
+#             image /= 65535.0
+#         else:
+#             image /= 255.0
 
-        if self.bit_depth == 8:
-            image /= 255.0
-        elif self.bit_depth == 16:
-            image /= 65535.0
-        else:
-            image /= 255.0
+#         if self.transforms:
+#             image = self.transforms(image)
 
-        if self.transforms:
-            image = self.transforms(image)
+#         label = self.class_dir[self.metadata.iloc[idx, 13]]
 
-        label = self.class_dir[self.metadata.iloc[idx, 13]]
-
-        return image, label
+#         return image, label
 
 
 def get_new_model(n_classes=13, unfreeze_mixed=True):
@@ -110,7 +108,7 @@ def get_new_model(n_classes=13, unfreeze_mixed=True):
                 nn.init.xavier_uniform_(mod[1].weight)
 
         for name, param in base_model.named_parameters():
-            if "Mixed_7c" in name or "Mixed_7b" in name: # or "Mixed_7a" in name:
+            if "Mixed_7c" in name or "Mixed_7b" in name:
                 param.requires_grad = True
 
     #replace the last fc layer
@@ -204,6 +202,16 @@ parser.add_argument("-learning_rate",
                     required=False,
                     default=0.0001,
                     help="Learning rate")
+parser.add_argument("-unfreeze", 
+                    type=bool, 
+                    required=False,
+                    default=True,
+                    help="Unfreeze the last 2 mixture layers")
+parser.add_argument("-data_augment", 
+                    type=bool, 
+                    required=False,
+                    default=False,
+                    help="Add data augmentation")
 parser.add_argument('-config', 
                     type=str, 
                     required=False, 
@@ -229,10 +237,16 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # according to model documentation in PyTorch
-    transforms = v2.Compose([v2.ToImage(),
-                            v2.Resize((1024, 1024), antialias=True), 
-                            v2.ToDtype(torch.float32, scale=True),
-                            v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+    transforms = None
+    if args.data_augment:
+        transforms = trn.get_da_transform(size=1024)
+    else:
+        transforms = trn.get_transform(size=1024)
+
+    # transforms = v2.Compose([v2.ToImage(),
+    #                         v2.Resize((1024, 1024), antialias=True), 
+    #                         v2.ToDtype(torch.float32, scale=True),
+    #                         v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
     # basic logging
     logging.basicConfig(filename=project_config["training"]["logfile"],
@@ -243,7 +257,7 @@ def main():
 
     logger.debug(f"image directory: {img_dir}")
 
-    training_data = CapstoneDataset(
+    training_data = cds.CapstoneDataset(
         dataset, 
         img_dir, 
         ds_type="train",
@@ -251,8 +265,16 @@ def main():
         transforms=transforms, 
         target_transforms=None
     )
+    # training_data = CapstoneDataset(
+    #     dataset, 
+    #     img_dir, 
+    #     ds_type="train",
+    #     bit_depth=bit_depth,
+    #     transforms=transforms, 
+    #     target_transforms=None
+    # )
 
-    validation_data = CapstoneDataset(
+    validation_data = cds.CapstoneDataset(
         dataset, 
         img_dir, 
         ds_type="val",
@@ -260,6 +282,14 @@ def main():
         transforms=transforms, 
         target_transforms=None
     )
+    # validation_data = CapstoneDataset(
+    #     dataset, 
+    #     img_dir, 
+    #     ds_type="val",
+    #     bit_depth=bit_depth,
+    #     transforms=transforms, 
+    #     target_transforms=None
+    # )
 
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(validation_data, batch_size=batch_size, shuffle=False)
