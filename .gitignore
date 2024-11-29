@@ -162,3 +162,9 @@ cython_debug/
 #.idea/
 # exported PyTorch models are too large
 models/*.pt
+models/base_model/*.pt
+models/data_augment/*.pt
+models/last_2_layers/*.pt
+data/embeddings/*.csv
+data/embeddings/*.parquet
+data/interim/embeddings/
