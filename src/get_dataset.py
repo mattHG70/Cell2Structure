@@ -7,6 +7,7 @@ import project_utils as utl
 from tqdm import tqdm
 
 
+# default parameters
 default_data_dir = "../data/external"
 default_config_file = "../project_config.toml"
 
@@ -26,6 +27,8 @@ parser.add_argument('-config',
 args = parser.parse_args()
 
 
+# Download the respective csv file and place it into the
+# external data folder
 def get_BBBC021_dataset(url, filepath):
     resp = requests.get(url, stream=True)
     with open(filepath, "wb") as file_out:
@@ -37,8 +40,11 @@ def main():
     data_dir = args.datadir
     config_file = args.config
 
+    # Load the project configuraion containing the csv file names
     config = utl.load_project_conf(config_file)
     
+    # Go through all configured csv files and download them from
+    # the Broad Institute
     for data_table in config["BBC021_CSV"]:
         if data_table["type"] == "moas_enchanced":
             continue

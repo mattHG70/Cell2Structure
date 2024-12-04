@@ -1,13 +1,9 @@
-import os
 import argparse
 
 import pandas as pd
 import numpy as np
 import project_utils as utl
 
-from rdkit import Chem
-from rdkit import DataStructs
-from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from rdkit.Chem import PandasTools
 
@@ -44,6 +40,7 @@ parser.add_argument('-config',
 args = parser.parse_args()
 
 
+# calculat RDKit descriptors and add them to Pandas dataframe
 def generate_rdkit_descr(df):
     mols = df["mol"].to_list()
     descriptors = [Descriptors.CalcMolDescriptors(mol) for mol in mols]
@@ -59,6 +56,8 @@ def main():
     df_bbbc021 = pd.read_csv(args.datafile)
 
     df_compounds = utl.get_dataframe(df_bbbc021, args.style)
+
+    # add RDKit molecule column to dataframe
     PandasTools.AddMoleculeColumnToFrame(df_compounds, smilesCol="Image_Metadata_SMILES", molCol="mol")
 
     descriptors = generate_rdkit_descr(df_compounds)

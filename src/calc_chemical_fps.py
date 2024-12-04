@@ -1,17 +1,14 @@
-import os
 import argparse
 
 import project_utils as utl
 import pandas as pd
 import numpy as np
 
-from rdkit import Chem
-from rdkit import DataStructs
 from rdkit.Chem import AllChem
-from rdkit.Chem import Descriptors
 from rdkit.Chem import PandasTools
 
 
+# default parameters. Paths are based on the repository.
 default_data_file = "../data/processed/BBBC021_final_original_dataset.csv"
 default_config_file = "../project_config.toml"
 default_output_file = "../data/processed/BBBC021_original_compounds_fps.pickle"
@@ -46,8 +43,14 @@ args = parser.parse_args()
 
 def generate_fps(df):
     fp_params = project_config["Moragen_FP_params"]
+
+    # create fingerprint generator
     fpgen = AllChem.GetMorganGenerator(radius=fp_params["radius"], fpSize=fp_params["size"])
+
+    # add RDKit molecule column to dataframe
     PandasTools.AddMoleculeColumnToFrame(df, smilesCol="Image_Metadata_SMILES", molCol="mol")
+
+    # generate Morgan cyrcular fingerprints and add them to the dataframe 
     df["morgan_fp"] = df["mol"].apply(fpgen.GetFingerprint)
 
     return df

@@ -5,6 +5,7 @@ import pandas as pd
 import project_utils as utl
 
 
+# default parameters
 default_config_file = "../project_config.toml"
 default_data_ext_dir = "../data/external"
 default_data_interim_dir = "../data/interim"

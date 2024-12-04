@@ -8,7 +8,11 @@ from torch.utils.data import Dataset
 
 import project_utils as utl
 
-
+"""
+Implementation of Pytroch dataset class for use in the Capstone project.
+The class uses OpenCV to load and manipulate the image files.
+Can handle 16bit and 8bit images (default 8bit)
+"""
 class CapstoneDataset(Dataset):
     def __init__(self, metadata_file, image_dir, ds_type="train", bit_depth=8, transforms=None, target_transforms=None):
         df = pd.read_csv(metadata_file)
@@ -16,9 +20,12 @@ class CapstoneDataset(Dataset):
         moas = df["Image_Metadata_MoA"].unique()
         moas = moas[~pd.isnull(moas)]
 
+        # assign a numeric label to each MoA
         self.class_dir = dict(zip(np.sort(moas), range(len(moas))))
         self.classes = self.class_dir.keys()
 
+        # split the dataset into trains, val and test sets
+        # the full dataset contains all images which are labled with a MoA
         df_train, df_val, df_test = utl.create_train_test_val_sets(df)
         if ds_type == "train":
             self.metadata = df_train
@@ -50,6 +57,7 @@ class CapstoneDataset(Dataset):
             self.image_dir, self.metadata.iloc[idx, 8], self.metadata.iloc[idx, 6]
         )
 
+        # load the all 3 channels of an images, either 8bit or 16bit
         if self.bit_depth == 8:
             img_dapi = cv2.imread(img_dapi_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
@@ -63,6 +71,7 @@ class CapstoneDataset(Dataset):
             img_tubulin = cv2.imread(img_tubulin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
             img_actin = cv2.imread(img_actin_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
 
+        # merge all 3 channels into one image
         image = (cv2.merge([img_dapi, img_tubulin, img_actin]))
 
         if self.bit_depth == 8:
@@ -72,9 +81,11 @@ class CapstoneDataset(Dataset):
         else:
             image /= 255.0
 
+        # apply transformation
         if self.transforms:
             image = self.transforms(image)
 
+        # get MoA label of the the image
         label = self.class_dir[self.metadata.iloc[idx, 13]]
 
         return image, label

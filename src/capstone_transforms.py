@@ -2,9 +2,11 @@ import torch
 
 from torchvision.transforms import v2
 
-# Normalizing the vectors is done according to the documentation for pytorch.
-# The original ImageNet images were normalized in that way.
-
+"""
+Normalizing the vectors is done according to the documentation for pytorch.
+The original ImageNet images were normalized in that way.
+"""
+# Transformation without data augmentation
 def get_transform(size=1024):
     transforms = v2.Compose([v2.ToImage(),
                             v2.Resize((size, size), antialias=True), 
@@ -14,6 +16,7 @@ def get_transform(size=1024):
     return transforms
 
 
+# Transformations incl. data augmention
 def get_da_transform(size=1024):
     transforms = v2.Compose([v2.ToImage(),
                             v2.Resize((size, size), antialias=True),
