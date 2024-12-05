@@ -8,6 +8,7 @@ import numpy as np
 import project_utils as utl
 
 
+# default parameters
 default_config_file = "../project_config.toml"
 default_image_dir = "/scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images"
 default_data_file = "../data/processed/BBBC021_final_original_dataset.csv"
@@ -39,6 +40,10 @@ parser.add_argument("-config",
 args = parser.parse_args()
 
 
+"""
+Module to sort images for use in the first training round in the Capstone project.
+Training happened only on the last fully connected layer.
+"""
 def sort_images(df, source_path, destination_path, max_img_per_moa=None):
 
     #first we iterate through each MoA

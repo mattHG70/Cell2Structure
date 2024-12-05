@@ -3,9 +3,15 @@ import tomlkit
 import pandas as pd
 import numpy as np
 
+# Usual random state value ;-)
+# Used to sample from a Pandas dataframe
 random_state = 42
 
+"""
+Utility module used in various Python modules throughout the Capstone project.
+"""
 
+# Load the project configuration from the toml file
 def load_project_conf(toml_file):
     with open(toml_file, "rb") as config_file:
         config = tomlkit.load(config_file)
@@ -13,11 +19,13 @@ def load_project_conf(toml_file):
     return config
 
 
+# Get a dataframe based on compound name, MoA and SMILES structure
 def get_dataframe(df, style):
     df_cmpds = df[["Image_Metadata_Compound", "Image_Metadata_MoA", "Image_Metadata_SMILES"]].copy()
     df_cmpds = df_cmpds.drop_duplicates(ignore_index=True)
     df_cmpds = df_cmpds[df_cmpds["Image_Metadata_SMILES"].notna()]
 
+    # if style is 'moa' only compounds having a SMILES and are labled with a MoA are selected
     if style == "moa":
         df_cmpds = df_cmpds[(df_cmpds["Image_Metadata_SMILES"].notna()) & (df_cmpds["Image_Metadata_MoA"].notna())]
 
@@ -26,6 +34,11 @@ def get_dataframe(df, style):
     return df_cmpds
 
 
+"""
+Split BBBC021 metadata dataset into train, eval and test set.
+Account for data leakage during split and creation of the individual
+subsets.
+"""
 def create_train_test_val_sets(df):
     df_dataset_moa = df[df["Image_Metadata_MoA"].notna()]
     df_cmpd_moa = df_dataset_moa.groupby(["Image_Metadata_Compound", "Image_Metadata_MoA"])["Image_FileName_DAPI"].count().to_frame().reset_index()
@@ -44,7 +57,7 @@ def create_train_test_val_sets(df):
     df_train = df_train[df_train["Image_Metadata_Compound"] != "DMSO"]
     df_train = pd.concat([df_train, df_dmso], axis=0)
 
-    # handel taxol
+    # handle taxol
     df_taxol = df_train[df_train["Image_Metadata_Compound"] == "taxol"].sample(n=100, random_state=random_state)
     df_train = df_train[df_train["Image_Metadata_Compound"] != "taxol"]
     df_train = pd.concat([df_train, df_taxol], axis=0, ignore_index=True) # .reset_index()

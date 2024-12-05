@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 
+# default parameters
 default_embd_path = "../data/interim/embeddings/original_model.npy"
 default_dataset = "../data/processed/BBBC021_final_original_dataset.csv"
 default_output_embd = "../data/embeddings/embeddings_original_MoA_only"
@@ -28,6 +29,10 @@ parser.add_argument('-out_embd',
 args = parser.parse_args()
 
 
+"""
+Merge the image embedding vectors with the BBBC021 dataset.
+Image embedding vectors are stored in a Numpy array.
+"""
 def main():
     df = pd.read_csv(args.dataset)
     df = df[df["Image_Metadata_MoA"].notna()].reset_index(drop=True)
@@ -38,6 +43,7 @@ def main():
 
     df_merged = pd.concat([df, df_vectors], axis=1)
 
+    # export embedding dataset as csv and compressed parquet file
     df_merged.to_csv(args.out_embd + ".csv")
     df_merged.to_parquet(args.out_embd + ".parquet")
 

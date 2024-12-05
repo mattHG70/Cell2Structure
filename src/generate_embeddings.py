@@ -48,7 +48,11 @@ parser.add_argument("-base_model",
                     help="Use base model without finetuning")
 args = parser.parse_args()
 
-
+"""
+Module responsible for generating the image embedding vectors base on a pre-trained model.
+An Inception V3 model gets created with the ImageNet default weights. The actual 
+pre-trained model is than loaded from a Pytroch model's state dict.
+"""
 def load_model(path, device, n_classes=13, original_model=False):
     pt_model = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
     
@@ -64,7 +68,10 @@ def load_model(path, device, n_classes=13, original_model=False):
         pt_model.fc = nn.Linear(num_ftrs, n_classes)
         pt_model.load_state_dict(pretrained_weights, assign=True)
 
-
+    # Create a Pytorch feature extractor on the last average pooling layer to
+    # retrieve the flat image embedding vectors
+    # Code based on Pytroch doc:
+    # https://pytorch.org/vision/stable/feature_extraction.html
     embd_node = {"avgpool": "avgpool"}
 
     return create_feature_extractor(pt_model, return_nodes=embd_node)
@@ -88,10 +95,13 @@ def main():
 
     model = load_model(args.model_path, device, n_classes=len(embd_dataset.classes), original_model=args.base_model)
     model.to(device)
+
+    # Switch model to eval mode for prediction
     model.eval()
 
     embd_vecs = np.empty((0, 2048))
 
+    # Generate the image embedding vectors
     with torch.no_grad():
         for i, (images, _) in enumerate(embd_dataloader):
             images = images.to(device)

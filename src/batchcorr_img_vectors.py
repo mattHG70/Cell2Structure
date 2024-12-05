@@ -11,6 +11,10 @@ parser.add_argument('-outfile', type=str, required=True, help="Output file name,
 args = parser.parse_args()
 
 
+"""
+Module to do a batch correction of the image embedding vectors before
+analyzing them.
+"""
 def main():
     # read in embedding file. Set smiles and moa column to datatype string
     # because Pandas finds mixed datatypes due to nan values.
@@ -21,7 +25,7 @@ def main():
     data = df_embed_vec[vec_cols]
     batches = df_embed_vec.loc[:, "Image_Metadata_Plate_DAPI"]
     
-    # actual batch correction step
+    # actual batch correction step using pycombat from InMoose library
     data_corrected = pycombat_norm(data.T, batches)
 
     # concatenate corrected vectors with metadata

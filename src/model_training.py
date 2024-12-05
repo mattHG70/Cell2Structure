@@ -9,10 +9,8 @@ import logging
 
 import torch
 import torch.nn as nn
-# from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-# from torchvision.transforms import v2
 import torchvision.models as models
 
 import project_utils as utl
@@ -20,6 +18,7 @@ import capstone_dataset as cds
 import capstone_transforms as trn
 
 
+# Create a new Inception V3 model
 def get_new_model(n_classes=13, unfreeze_mixed=True):
     base_model = models.inception_v3(weights=models.Inception_V3_Weights.DEFAULT)
     base_model.eval()
@@ -103,6 +102,7 @@ def eval_model(model, dataloader, criterion, device):
     return losses, accuracy
 
 
+# Same trained model as a state dict for further use in embedding creation
 def save_model(model, model_type="base", batch_size=32, n_epochs=30, learning_rate=0.001, bit_depth=8, unfreeze_mixed=True):
     path = project_config["training"]["modeldir"]
     model_name = None
@@ -159,6 +159,10 @@ parser.add_argument('-config',
 args = parser.parse_args()
 
 
+"""
+Module used for training and fine tuning the pre-trained Inception V3 model.
+Can use multiple GPUs if available.
+"""
 def main():
     # load project configuration
     global project_config
@@ -214,8 +218,11 @@ def main():
 
     model = get_new_model(n_classes=len(training_data.classes), unfreeze_mixed=True)
 
+    # Paralllelize over multiple GPUs if possible
+    # Code taken from Pytorch example
+    # https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html
     if torch.cuda.device_count() > 1:
-        logger.debug(f"Let's use {torch.cuda.device_count()} GPUs!")
+        logger.debug(f"Use {torch.cuda.device_count()} GPUs")
         model = nn.DataParallel(model)
 
     model.to(device)
