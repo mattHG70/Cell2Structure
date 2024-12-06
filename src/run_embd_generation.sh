@@ -21,9 +21,9 @@
 # using 1 node and 1 gpu
 
 # run bashrc
-source /home/mhuebsch/.bashrc
+source ~/.bashrc
 # switch to directory containing all scripts
-cd /home/mhuebsch/siads699/Cell2Structure/src
+cd ~/siads699/Cell2Structure/src
 # load a python+conda module if necessary
 # module load <ptyhon module>
 module load cuda cudnn
@@ -37,6 +37,7 @@ echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] Starting the workflow
 echo [INFO] [$START] [$STARTDATE] [$$] [$JOB_ID] We got the following cores: $CUDA_VISIBLE_DEVICES
 
 # set device to "cuda" to enable gpu usage
+# the image_path parameters contains the full path the images and need to be adapted
 python generate_embeddings.py -dataset_path ../data/processed/BBBC021_final_original_dataset.csv \
                               -image_path /scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images \
                               -model_path ../data_augment/models/capstone_model_32_25_0.0001_1_16.pt \

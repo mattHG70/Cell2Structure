@@ -20,9 +20,9 @@
 # using 1 node and 1 gpu
 
 # run bashrc
-source /home/mhuebsch/.bashrc
+source ~/.bashrc
 # switch to directory containing all scripts
-cd /home/mhuebsch/siads699/Cell2Structure/src
+cd ~/siads699/Cell2Structure/src
 # load a python+conda module if necessary
 # module load <ptyhon module>
 module load cuda cudnn
@@ -43,7 +43,7 @@ python model_training.py -bit_depth 8 \
                          -data_augment False \
                          -unfreeze True \
                          -model_type l2l \
-                         -config /home/mhuebsch/siads699/Cell2Structure/project_config.toml
+                         -config ~/siads699/Cell2Structure/project_config.toml
 
 EXITCODE=$?
 

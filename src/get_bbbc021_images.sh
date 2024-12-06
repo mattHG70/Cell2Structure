@@ -22,9 +22,11 @@
 # due to its run time. No blocking of resources on the login node
 
 # run bashrc for the current user
-source /home/mhuebsch/.bashrc
+source ~/.bashrc
 
 # actual image directory on the SIADS 699 scratch space
+# we will leave these folder names as they are as an example
+# of our work
 # adapt the user folder when needed
 mkdir /scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images
 cd /scratch/siads699f24_class_root/siads699f24_class/mhuebsch/images
